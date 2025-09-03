@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+def index(_request):
+    return JsonResponse({"status": "ok", "message": "Django API running"})
+
 
 urlpatterns = [
+    path("", index),
     path('admin/', admin.site.urls),
     path("products/", include("products.urls")),
     path("api/", include("cart.urls")), 
