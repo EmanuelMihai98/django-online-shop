@@ -1,6 +1,7 @@
 from django.conf import settings
 from products.models import Product
 from decimal import Decimal
+from datetime import datetime
 
 class Cart:
     def __init__(self, request):
@@ -18,7 +19,7 @@ class Cart:
     def add(self, product):
         product_id = str(product.id)
         if product_id not in self.cart:
-            self.cart[product_id] = {"quantity": 0}
+            self.cart[product_id] = {"quantity": 0,  "timestamp": datetime.utcnow().isoformat()}
         self.cart[product_id]["quantity"] += 1
         self.save()
 
@@ -35,7 +36,8 @@ class Cart:
         product_id = str(product.id)
         if product_id in self.cart:
             del self.cart[product_id]
-        self.save()
+            self.save()
+          
 
     
     def items(self):
@@ -52,9 +54,10 @@ class Cart:
                 "name": product.name,
                 "price": str(price),
                 "quantity": quantity,
-                "total": str(total)
+                "total": str(total),
+                "timestamp": self.cart[product_id].get("timestamp")
             })
-        result.sort(key=lambda x: x["id"])
+        result.sort(key=lambda x: x["timestamp"])
         return result
     
     def total(self):
