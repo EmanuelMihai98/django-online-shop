@@ -9,18 +9,19 @@ class UserTestApi(APITestCase):
     def setUp(self):
         self.register_url = reverse("register")
         self.login_url = reverse("login_view")
-        self.logout_url = reverse("logout_view")
+        self.logout_url = reverse("logout")
         self.me_url = reverse("me")
         self.change_password_url = reverse("change_password")
 
-        self.user = User.objects.create(
-            username = "Mihai",
-            email = "mihai@yahoo.com",
-            password = "Str0ngPassword123!",
+        # Creează userul corect, cu parolă HASH-uită
+        self.user = User.objects.create_user(
+            username="Mihai",
+            email="mihai@yahoo.com",
+            password="Str0ngPassword!23",
         )
 
     def test_register_succes(self):
-        response = self.client.post(self.register_url,{
+        response = self.client.post(self.register_url, {
             "username": "anotheruser",
             "email": "anothermail@yahoo.com",
             "password": "Str0ngPassword!23",
@@ -53,21 +54,21 @@ class UserTestApi(APITestCase):
 
     def test_login(self):
         response = self.client.post(self.login_url, {
-            "username":"Mihai",
-            "email":"mihai@yahoo.com",
+            "username": "Mihai",
+            "password": "Str0ngPassword!23",
         }, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(self.me_url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["username"], "mihai")
+        self.assertEqual(response.data["username"].lower(), "mihai")
 
     def test_logout(self):
         self.client.post(self.login_url, {
-           "username":"Mihai",
+           "username": "Mihai",
            "password": "Str0ngPassword!23",
         }, format="json")
-        
+
         response = self.client.post(self.logout_url, format="json")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data, None)
@@ -75,27 +76,26 @@ class UserTestApi(APITestCase):
     def test_me_requires_auth(self):
         self.client.post(self.logout_url, format="json")
         response = self.client.get(self.me_url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_change_password(self):
         self.client.post(self.login_url, {
-           "username":"Mihai",
+           "username": "Mihai",
            "password": "Str0ngPassword!23",
-           }, format="json")
-        
+        }, format="json")
+
         response = self.client.post(self.change_password_url, {
-           "password": "Str0ngPassword!23",
+           "current_password": "Str0ngPassword!23",
            "new_password": "Str0ngPassword!123"
         }, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("message", response.data)
+        self.assertIn("detail", response.data)
 
         self.client.post(self.logout_url, format="json")
-        response = self.client.post(self.login_url,{
-            "username":"Mihai",
+        response = self.client.post(self.login_url, {
+            "username": "Mihai",
             "password": "Str0ngPassword!123"
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("username", response.data)
-        

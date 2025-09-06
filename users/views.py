@@ -43,7 +43,7 @@ def login_view(request):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def logout_view(request):
+def logout(request):
     auth_logout(request)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
