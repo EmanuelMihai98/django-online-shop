@@ -86,38 +86,43 @@ def add_to_cart(request):
 
 
 def view_cart(request):
+    try:
+        cart = request.session.get("cart", {})
+        total = 0 
+        cart_items = []
 
-    cart = request.session.get("cart", {})
+        for product_id, item_data in cart.items():
+            try:
+                product = Product.objects.get(id=product_id)
+                quantity = item_data["quantity"]
+                subtotal = product.price * quantity
+                total += subtotal
 
-    total = 0 
-    cart_items = []
+                cart_items.append({
+                    "id": product_id,
+                    "name": product.name,
+                    "price": product.price,
+                    "quantity": quantity,
+                    "subtotal": subtotal,
+                    "product_object": product
+                })
+            except Product.DoesNotExist:
+                pass
+            except Exception as e:
+                print(f"ERROR item: {e}")
 
-    for product_id, item_data in cart.items():
-        try:
-            product = Product.objects.get(id=product_id)
+        context = {
+            "cart_items": cart_items,
+            "total": total
+        }
 
-            quantity = item_data["quantity"]
-
-            subtotal = product.price * quantity
-            total += subtotal
-
-            cart_items.append({
-                "id": product_id,
-                "name": product.name,
-                "price": product.price,
-                "quantity": quantity,
-                "subtotal": subtotal,
-                "product_object": product
-            })
-        except Product.DoesNotExist:
-            pass
-
-    context = {
-        "cart_items": cart_items,
-        "total": total
-    }
-
-    return render(request, "cart.html", context)
+        return render(request, "cart.html", context)
+    
+    except Exception as e:
+        print(f"MAJOR ERROR in view_cart: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
 
 @require_POST
 def update_cart_quantity(request):

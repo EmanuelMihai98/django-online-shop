@@ -321,7 +321,7 @@
                                 <form action="{% url 'delete_from_cart' %}" method="POST">
                                     {% csrf_token %}
                                     <input type="hidden" name="product_id" value="{{ item.id }}">
-                                    <button type="submit" classli="btn-delete" title="Șterge produsul">
+                                    <button type="submit" class="btn-delete" title="Șterge produsul">
                                         &times;
                                     </button>
                                 </form>
