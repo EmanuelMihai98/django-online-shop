@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+import dj_database_url
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,20 +25,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)a-kii*#uah!h!gw8@xnk=l)a(xm&+isf(uvcy7bxwfi^^wlhs'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "FALSE") == "TRUE"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1, localhost").split(",")
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://*.127.0.0.1:8000',
+    'http://*.localhost',
+]
 
-# Application definition
+render_url = os.environ.get('RENDER_EXTERNAL_URL')
+if render_url:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_url}")
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME', render_url))
 
 INSTALLED_APPS = ['rest_framework',
-    'products',
-    "cart",
-    "orders",
+    'products.apps.ProductsConfig',
+    'cart.apps.CartConfig',
+    'accounts.apps.AccountsConfig',
+    'orders.apps.OrdersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,7 +57,9 @@ INSTALLED_APPS = ['rest_framework',
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,10 +91,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+    
+        default=os.environ.get(
+            'DATABASE_URL',
+            
+            f"postgres://{os.environ.get('DB_USER')}:{os.environ.get('DB_PASSWORD')}@localhost:5432/{os.environ.get('DB_NAME')}"
+        ),
+ 
+        conn_max_age=600 
+    )
 }
 
 
@@ -124,7 +145,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-assert 'products' in INSTALLED_APPS, "settings.py: 'products' missing from INSTALLED_APPS"
+assert 'products' in INSTALLED_APPS or 'products.apps.ProductsConfig' in INSTALLED_APPS, "settings.py: 'products' missing from INSTALLED_APPS"
 assert 'rest_framework' in INSTALLED_APPS, "settings.py: 'rest_framework' missing from INSTALLED_APPS"
 
 CART_SESSION_ID = "cart"
+
+STATIC_URL = 'static/'
+
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

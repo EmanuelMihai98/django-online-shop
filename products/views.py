@@ -1,9 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import Product
 from .serializers import ProductSerializer
+from .forms import ProductForm
+from .models import Product, Category
+
 
 @api_view(["GET"])
 def products_list(request):
@@ -42,5 +45,77 @@ def delete_product(request, pk):
     product.delete()
     return Response(status=204)
 
+
+
+def product_list_page(request):
+    products = Product.objects.all()
+    categories = Category.objects.all()
+
+    context = {
+        "products": products,
+        "categories": categories
+    }
+
+    return render(request, "product_list.html", context)
+
+def get_product_page(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+
+    context = {
+        "product": product
+    }
+
+    return render(request, "get_product.html", context)
+
+def add_product_page(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('product_list_page')
+        
+    else:
+
+        form = ProductForm()
+
+    context = {
+        "form": form
+    }
+    return render(request, 'product_form.html', context)
+
+def update_product_page(request, pk):
+
+    product = get_object_or_404(Product, pk)
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance= product)
+        if form.is_valid():
+            form.save()
+
+            return redirect('product_list_page')
+    
+    else:
+        
+        form = ProductForm(instance=product)
+
+    context = {
+        "form": form
+    }
+    return render(request, "product_form.html", context)
+
+def delete_product_page(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    if request.method == "POST":
+
+        product.delete()
+
+        return redirect("product_list_page")
+
+    context = {
+        "product": product
+    }
+    return render(request, "product_confirm_delete", context)
 
 

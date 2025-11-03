@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Shop Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .back-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .product-detail {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .product-image-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            min-height: 500px;
+        }
+
+        .product-icon {
+            font-size: 200px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .product-info-section {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            font-size: 3em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .product-price small {
+            font-size: 0.5em;
+            color: #999;
+            font-weight: 400;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .product-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .meta-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f0f0;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            width: fit-content;
+        }
+
+        .quantity-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .quantity-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .features {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .features h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .features-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 968px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .product-image-section {
+                min-height: 300px;
+                padding: 40px;
+            }
+
+            .product-icon {
+                font-size: 120px;
+            }
+
+            .product-info-section {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .product-price {
+                font-size: 2.5em;
+            }
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .stock-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'products_list_page' %}" class="back-button">
+            ← Înapoi la produse
+        </a>
+
+        <div class="product-detail">
+            <div class="product-image-section">
+                <div class="product-icon">
+                    {% if 'laptop' in product.name|lower %}💻
+                    {% elif 'monitor' in product.name|lower %}🖥️
+                    {% elif 'tastatur' in product.name|lower %}⌨️
+                    {% elif 'mouse' in product.name|lower %}🖱️
+                    {% elif 'casti' in product.name|lower or 'căști' in product.name|lower %}🎧
+                    {% elif 'webcam' in product.name|lower or 'camera' in product.name|lower or 'cameră' in product.name|lower %}📷
+                    {% elif 'microfon' in product.name|lower %}🎤
+                    {% elif 'ssd' in product.name|lower or 'storage' in product.name|lower %}💾
+                    {% elif 'ram' in product.name|lower or 'memorie' in product.name|lower %}🔧
+                    {% elif 'video' in product.name|lower or 'gpu' in product.name|lower or 'placa' in product.name|lower or 'placă' in product.name|lower %}🎮
+                    {% elif 'iphone' in product.name|lower or 'samsung' in product.name|lower or 'xiaomi' in product.name|lower or 'telefon' in product.name|lower %}📱
+                    {% elif 'ipad' in product.name|lower or 'tablet' in product.name|lower %}📱
+                    {% elif 'cablu' in product.name|lower %}🔌
+                    {% elif 'incarcator' in product.name|lower or 'încărcător' in product.name|lower %}🔋
+                    {% elif 'power bank' in product.name|lower %}🔋
+                    {% elif 'suport' in product.name|lower %}📐
+                    {% elif 'lampa' in product.name|lower or 'lampă' in product.name|lower or 'bec' in product.name|lower %}💡
+                    {% elif 'controller' in product.name|lower %}🎮
+                    {% elif 'scaun' in product.name|lower %}🪑
+                    {% elif 'mousepad' in product.name|lower %}🖱️
+                    {% elif 'wheel' in product.name|lower or 'volan' in product.name|lower %}🏎️
+                    {% elif 'difuzor' in product.name|lower or 'speaker' in product.name|lower or 'echo' in product.name|lower %}🔊
+                    {% elif 'husa' in product.name|lower %}📱
+                    {% else %}📦
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="product-info-section">
+                <div class="breadcrumb">
+                    <a href="{% url 'products_list_page' %}">Produse</a>
+                    <span>/</span>
+                    <span>{{ product.category.name }}</span>
+                    <span>/</span>
+                    <span>{{ product.name }}</span>
+                </div>
+
+                <span class="category-badge">{{ product.category.name }}</span>
+
+                <div class="stock-status in-stock">
+                    <span class="stock-indicator"></span>
+                    În stoc
+                </div>
+
+                <h1>{{ product.name }}</h1>
+
+                <div class="product-price">
+                    {{ product.price }} <small>Lei</small>
+                </div>
+
+                <div class="product-description">
+                    Produsul este disponibil pentru livrare rapidă. Beneficiezi de garanție și suport tehnic complet.
+                </div>
+
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Categorie</span>
+                        <span class="meta-value">{{ product.category.name }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Cod Produs</span>
+                        <span class="meta-value">#{{ product.id }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Status</span>
+                        <span class="meta-value">În stoc</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Livrare</span>
+                        <span class="meta-value">1-3 zile</span>
+                    </div>
+                </div>
+
+                <div class="quantity-selector">
+                    <span class="quantity-label">Cantitate:</span>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                        <span class="quantity-value" id="quantity">1</span>
+                        <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <form method="POST" action="{% url 'add_to_cart' %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" id="quantityInput" value="1">
+                        <button type="submit" class="btn btn-primary">
+                            🛒 Adaugă în Coș
+                        </button>
+                    </form>
+                    <button class="btn btn-secondary" onclick="alert('❤️ Adăugat la favorite!')">
+                        ❤️ Favorite
+                    </button>
+                </div>
+
+                <div class="features">
+                    <h3>✨ Caracteristici</h3>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Livrare gratuită pentru comenzi peste 200 Lei</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Garanție 24 luni</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Retur în 30 de zile</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Suport tehnic dedicat</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <span>Plată securizată</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let quantity = 1;
+
+        function increaseQuantity() {
+            quantity++;
+            updateQuantity();
+        }
+
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                updateQuantity();
+            }
+        }
+
+        function updateQuantity() {
+            document.getElementById('quantity').textContent = quantity;
+            document.getElementById('quantityInput').value = quantity;
+        }
+    </script>
+</body>
+</html>

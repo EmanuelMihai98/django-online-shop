@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comandă Plasată!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { font-size: 3em; margin-bottom: 20px; }
+        p { font-size: 1.2em; line-height: 1.6; margin-bottom: 30px; }
+        .btn-primary {
+            display: inline-block;
+            padding: 18px 30px;
+            border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0,0,0, 0.1);
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Comandă plasată cu succes!</h1>
+        <p>
+            Îți mulțumim pentru comandă! Vei primi în curând un email de confirmare.
+            Statusul comenzii tale este acum **PENDING** și va fi procesată de un operator.
+        </p>
+        <a href="{% url 'products_list_page' %}" class="btn-primary">
+            Înapoi la Magazin
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Online - Produse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .search-filter-bar {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #666;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            min-height: 50px;
+        }
+
+        .product-price {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .no-products h2 {
+            color: #999;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .stats-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stats-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛒 Shop Online</h1>
+            <p class="subtitle">Descoperă cele mai bune produse la prețuri avantajoase</p>
+        </header>
+
+        <div class="search-filter-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Caută produse..." onkeyup="filterProducts()">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterByCategory('all')">Toate</button>
+                {% for category in categories %}
+                <button class="filter-btn" onclick="filterByCategory('{{ category.name }}')">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+            <div class="product-card" data-category="{{ product.category.name }}" data-name="{{ product.name|lower }}">
+                <div class="product-image">
+                    {% if 'laptop' in product.name|lower %}💻
+                    {% elif 'monitor' in product.name|lower %}🖥️
+                    {% elif 'tastatur' in product.name|lower %}⌨️
+                    {% elif 'mouse' in product.name|lower %}🖱️
+                    {% elif 'casti' in product.name|lower or 'căști' in product.name|lower %}🎧
+                    {% elif 'webcam' in product.name|lower or 'camera' in product.name|lower or 'cameră' in product.name|lower %}📷
+                    {% elif 'microfon' in product.name|lower %}🎤
+                    {% elif 'ssd' in product.name|lower or 'storage' in product.name|lower %}💾
+                    {% elif 'ram' in product.name|lower or 'memorie' in product.name|lower %}🔧
+                    {% elif 'video' in product.name|lower or 'gpu' in product.name|lower or 'placa' in product.name|lower or 'placă' in product.name|lower %}🎮
+                    {% elif 'iphone' in product.name|lower or 'samsung' in product.name|lower or 'xiaomi' in product.name|lower or 'telefon' in product.name|lower %}📱
+                    {% elif 'ipad' in product.name|lower or 'tablet' in product.name|lower %}📱
+                    {% elif 'cablu' in product.name|lower %}🔌
+                    {% elif 'incarcator' in product.name|lower or 'încărcător' in product.name|lower %}🔋
+                    {% elif 'power bank' in product.name|lower %}🔋
+                    {% elif 'suport' in product.name|lower %}📐
+                    {% elif 'lampa' in product.name|lower or 'lampă' in product.name|lower or 'bec' in product.name|lower %}💡
+                    {% elif 'controller' in product.name|lower %}🎮
+                    {% elif 'scaun' in product.name|lower %}🪑
+                    {% elif 'mousepad' in product.name|lower %}🖱️
+                    {% elif 'wheel' in product.name|lower or 'volan' in product.name|lower %}🏎️
+                    {% elif 'difuzor' in product.name|lower or 'speaker' in product.name|lower or 'echo' in product.name|lower %}🔊
+                    {% elif 'husa' in product.name|lower %}📱
+                    {% else %}📦
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">{{ product.price }} Lei</div>
+                    <div class="product-actions">
+                        <form method="POST" action="{% url 'add_to_cart' %}" style="flex: 1;">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">🛒 Adaugă în Coș</button>
+                        </form>
+                        <a href="{% url 'get_product_page' product.slug %}" class="btn btn-secondary">👁️ Detalii</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-products">
+                <h2>😔 Nu am găsit produse</h2>
+                <p>Încearcă să modifici criteriile de căutare</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="no-products" id="noProducts" style="display: none;">
+            <h2>😔 Nu am găsit produse</h2>
+            <p>Încearcă să modifici criteriile de căutare</p>
+        </div>
+
+        <div class="stats">
+            <div class="stats-number" id="productCount">{{ products|length }}</div>
+            <div class="stats-label">produse disponibile</div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = 'all';
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const name = card.getAttribute('data-name');
+                
+                const matchesCategory = currentCategory === 'all' || category === currentCategory;
+                const matchesSearch = name.includes(searchTerm);
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show/hide no products message
+            const noProductsDiv = document.getElementById('noProducts');
+            const productsGrid = document.getElementById('productsGrid');
+            
+            if (visibleCount === 0) {
+                noProductsDiv.style.display = 'block';
+                productsGrid.style.display = 'none';
+            } else {
+                noProductsDiv.style.display = 'none';
+                productsGrid.style.display = 'grid';
+            }
+            
+            document.getElementById('productCount').textContent = visibleCount;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <title>Adaugă Produs Nou</title>
+</head>
+<body>
+    <h1>Adaugă un Produs Nou</h1>
+
+    <form method="POST" action="">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Salvează Produsul</button>
+    </form>
+
+    <br>
+    <a href="{% url 'product_list_page' %}">Anulează și mergi înapoi</a>
+</body>
+</html>

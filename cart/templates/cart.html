@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coș de cumpărături</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .back-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        /* Cardul principal pentru coș */
+        .cart-wrapper {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            padding: 40px 50px;
+        }
+
+        .cart-wrapper h1 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+        
+        /* Lista de produse */
+        .cart-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Fiecare item din coș */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #eee;
+            gap: 15px;
+            flex-wrap: wrap; /* Pentru ecrane mai mici */
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 2;
+            min-width: 200px; /* Lățime minimă */
+        }
+
+        .item-icon {
+            font-size: 3em;
+            line-height: 1;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-price {
+            font-size: 0.9em;
+            color: #777;
+        }
+        
+        .item-subtotal {
+            flex: 1;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #667eea;
+            text-align: right;
+            min-width: 100px; /* Lățime minimă */
+        }
+        
+        .item-actions {
+            flex: 0.5;
+            text-align: right;
+            min-width: 50px; /* Lățime minimă */
+        }
+        
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #e53935;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            padding: 5px;
+            line-height: 1;
+        }
+        .btn-delete:hover {
+            transform: scale(1.2);
+        }
+
+        /* Secțiunea de Total */
+        .cart-total {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .total-label {
+            font-size: 18px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        /* Butoanele de acțiune */
+        .checkout-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap; /* Pentru ecrane mici */
+        }
+        .btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            min-width: 200px; /* Lățime minimă */
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-secondary:hover {
+            background: #f0f0f0;
+        }
+        
+        /* Mesaj pentru coș gol */
+        .empty-cart {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .empty-cart p {
+            font-size: 1.2em;
+            color: #777;
+            margin-bottom: 30px;
+        }
+        
+        /* ==== STILURI PENTRU FORMULARUL DE UPDATE ==== */
+        .item-quantity-form {
+            flex: 1.5;
+            min-width: 200px; /* Lățime minimă */
+        }
+        .item-quantity-form form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .quantity-input {
+            width: 70px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            text-align: center;
+            font-weight: 600;
+            background: white;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .quantity-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-update {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #667eea;
+            color: white;
+            font-size: 14px;
+        }
+        .btn-update:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'products_list_page' %}" class="back-button">
+            ← Continuă cumpărăturile
+        </a>
+
+        <div class="cart-wrapper">
+            <h1>🛒 Coșul tău de cumpărături</h1>
+
+            {% if not cart_items %}
+                <div class="empty-cart">
+                    <p>Coșul tău este gol momentan.</p>
+                    <a href="{% url 'products_list_page' %}" class="btn btn-primary" style="flex: none; width: auto; padding: 18px 30px;">
+                        Vezi Produsele
+                    </a>
+                </div>
+            {% else %}
+                <div class="cart-items-list">
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+                            <div class="item-info">
+                                <span class="item-icon">
+                                    {% if 'laptop' in item.name|lower %}💻
+                                    {% elif 'monitor' in item.name|lower %}🖥️
+                                    {% elif 'tastatur' in item.name|lower %}⌨️
+                                    {% elif 'mouse' in item.name|lower %}🖱️
+                                    {% elif 'casti' in item.name|lower or 'căști' in item.name|lower %}🎧
+                                    {% elif 'telefon' in item.name|lower %}📱
+                                    {% else %}📦
+                                    {% endif %}
+                                </span>
+                                <div class="item-details">
+                                    <span class="item-name">{{ item.name }}</span>
+                                    <span class="item-price">{{ item.price }} Lei / buc.</span>
+                                </div>
+                            </div>
+                            
+                            <div class="item-quantity-form">
+                                <form action="{% url 'update_cart_quantity' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ item.id }}">
+                                    <label for="qty-{{item.id}}" style="display:none;">Cantitate</label>
+                                    <input type="number" 
+                                           name="quantity" 
+                                           value="{{ item.quantity }}" 
+                                           min="0" 
+                                           class="quantity-input"
+                                           id="qty-{{item.id}}">
+                                    <button type="submit" class="btn-update">Actualizează</button>
+                                </form>
+                            </div>
+
+                            <div class="item-subtotal">
+                                {{ item.subtotal }} Lei
+                            </div>
+                            
+                            <div class="item-actions">
+                                <form action="{% url 'delete_from_cart' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ item.id }}">
+                                    <button type="submit" classli="btn-delete" title="Șterge produsul">
+                                        &times;
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="cart-total">
+                    <span class="total-label">Total de plată:</span>
+                    <span class="total-value">{{ total }} Lei</span>
+                </div>
+
+                <div class="checkout-actions">
+                    <a href="{% url 'products_list_page' %}" class="btn btn-secondary">
+                        Continuă cumpărăturile
+                    </a>
+                    <a href="{% url 'create_order_page' %}" class="btn btn-primary">
+                        Finalizează Comanda
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

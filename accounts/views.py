@@ -3,8 +3,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import messages
 
-from users.serializer import (
+from accounts.serializer import (
     UserSerializer,
     RegisterSerializer,
     LoginSerializer,
@@ -65,3 +68,67 @@ def change_password(request):
     serializer.save()
     return Response({"detail": "Password updated"}, status=status.HTTP_200_OK)
 
+
+def register_page(request):
+    if request.method == 'POST':
+    
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+           
+            user = form.save()
+           
+            login(request, user)
+            messages.success(request, f"Your account has been created ->{user.username}")
+          
+            return redirect('products_list_page') 
+        
+        else:
+            
+            messages.error(request, "try again")
+    else:
+        
+        form = UserCreationForm()
+        
+    context = {'form': form}
+    return render(request, 'accounts/register.html', context)
+
+
+def login_page(request):
+    if request.method == 'POST':
+        
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+        
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            
+           
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+               
+                login(request, user)
+                messages.info(request, f"Hello {username}.")
+             
+                return redirect('products_list_page')
+            
+            else:
+                
+                messages.error(request, "Incorect credentials")
+        else:
+         
+            messages.error(request, "Incorect credentials")
+    else:
+     
+        form = AuthenticationForm()
+        
+    context = {'form': form}
+    return render(request, 'accounts/login.html', context)
+
+
+def logout_page(request):
+   
+    logout(request)
+    messages.info(request, "successfully logged out")
+   
+    return redirect('products_list_page')
