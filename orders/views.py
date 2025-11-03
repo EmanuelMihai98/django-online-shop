@@ -129,7 +129,7 @@ def create_order(request):
                     del request.session['cart']
                     request.session.modified = True
                     
-                    return redirect('order_success_page')
+                    return redirect('order_success')
 
             except Product.DoesNotExist:
                
