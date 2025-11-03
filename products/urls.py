@@ -14,6 +14,4 @@ urlpatterns = [
     path("api/<int:pk>/update/", update_product, name="update_product_api"),
     path("api/<int:pk>/delete/", delete_product, name="delete_product_api")
 
-
-  
 ]

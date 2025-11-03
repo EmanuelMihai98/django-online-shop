@@ -1,0 +1,116 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$9Jio4E1mbaVewaipQGmS6A$JFjxjci2H++Y1ce91NO68CcOpGNKdevxzKFUS+XJgjU=",
+    "last_login": "2025-11-03T17:53:55.611Z",
+    "is_superuser": false,
+    "username": "mihai",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-03T17:53:55.305Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "products.category",
+  "pk": 1,
+  "fields": {
+    "name": "Electronice & IT",
+    "slug": "electronice-it"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 2,
+  "fields": {
+    "name": "Telefoane & Tablete",
+    "slug": "telefoane-tablete"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 3,
+  "fields": {
+    "name": "Accesorii",
+    "slug": "accesorii"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 4,
+  "fields": {
+    "name": "Gaming",
+    "slug": "gaming"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 5,
+  "fields": {
+    "name": "Smart Home",
+    "slug": "smart-home"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 6,
+  "fields": {
+    "name": "Laptopuri",
+    "slug": "laptopuri"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 7,
+  "fields": {
+    "name": "Monitoare",
+    "slug": "monitoare"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 8,
+  "fields": {
+    "name": "Periferice",
+    "slug": "periferice"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 9,
+  "fields": {
+    "name": "Componente",
+    "slug": "componente"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 38,
+  "fields": {
+    "name": "Laptop Gaming ASUS ROG",
+    "price": "4999.00",
+    "slug": "laptop-gaming-asus-rog",
+    "category": 1
+  }
+},
+{
+  "model": "products.product",
+  "pk": 39,
+  "fields": {
+    "name": "Monitor LED Samsung 27\"",
+    "price": "899.00",
+    "slug": "monitor-led-samsung-27",
+    "category": 1
+  }
+},
+{
+  "model": "products.product",
+  "pk": 40,
+  "fields": {
+    "name": 
