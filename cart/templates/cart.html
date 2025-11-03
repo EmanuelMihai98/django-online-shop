@@ -393,9 +393,9 @@
                     <a href="{% url 'products_list_page' %}" class="btn btn-secondary">
                         Continuă Cumpărăturile
                     </a>
-                    <button class="btn btn-primary" onclick="alert('Funcție de finalizare comandă în curând!')">
+                    <a href="{% url 'create_order' %}" class="btn btn-primary">
                         Finalizează Comanda
-                    </button>
+                    </a>
                 </div>
             {% endif %}
         </div>
