@@ -23,7 +23,7 @@ def index(_request):
 
 
 urlpatterns = [
-    path("", index),
+    path("", include("products.urls")),
     path('admin/', admin.site.urls),
     path("products/", include("products.urls")),
     path("cart/", include("cart.urls")), 
