@@ -5,7 +5,7 @@ urlpatterns = [
     path('create/', views.create_order, name='create_order'),
     path('success/', views.order_success, name='order_success'),
     
-    path("create/", views.create_order, name="create_order"),         
+    path("create/", views.create_order_api, name="create_order_api"),         
     path("my-orders/", views.my_orders, name="my_orders"),            
     path("<int:pk>/", views.order_detail, name="order_detail"),        
     path("<int:pk>/cancel/", views.cancel_order, name="cancel_order"), 

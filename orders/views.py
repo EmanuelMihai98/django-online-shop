@@ -14,7 +14,7 @@ from decimal import Decimal
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  # doar user logat poate comanda
-def create_order(request):
+def create_order_api(request):
     serializer = OrderCreateSerializer(data=request.data, context={"request": request})
     serializer.is_valid(raise_exception=True)
     order = serializer.save()
