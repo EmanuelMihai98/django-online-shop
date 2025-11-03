@@ -11,6 +11,8 @@ from .serializers import OrderSerializer, OrderCreateSerializer
 from .forms import OrderCreateForm
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
+from django.db import transaction
+
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  # doar user logat poate comanda
@@ -62,78 +64,91 @@ def pay_order(request, pk):
 
 @login_required 
 def create_order(request):
-  
+    
     cart = request.session.get('cart', {})
     
    
     if not cart:
-        messages.error(request, "Your cart is empty.")
+        messages.error(request, "Your cart is empty. Please add some products.")
         return redirect('products_list_page') 
 
     if request.method == 'POST':
-       
         form = OrderCreateForm(request.POST)
+        
         if form.is_valid():
-           
-            order = form.save(commit=False)
-            order.user = request.user 
             
-            
-            subtotal = Decimal('0.00')
-            items_to_create = []
-            
-            for product_id, item_data in cart.items():
-                try:
-                    product = Product.objects.get(id=product_id)
-                    quantity = item_data['quantity']
-                    item_total = product.price * quantity
-                    subtotal += item_total
+        
+            try:
+                with transaction.atomic():
+                   
+                    order = form.save(commit=False)
+                    order.user = request.user 
                     
-                    
-                    items_to_create.append(OrderItem(
-                        
-                        product=product,
-                        product_name=product.name, 
-                        price=product.price,       
-                        quantity=quantity,
-                        total=item_total
-                    ))
-                except Product.DoesNotExist:
-                    messages.error(request, f"A product from your cart is not available anymore")
-                    return redirect('view_cart') 
+                    subtotal = Decimal('0.00')
+                    items_to_create = []
 
+                   
+                    for product_id_str, item_data in cart.items():
+                        
+                      
+                        try:
+                            product_id_int = int(product_id_str)
+                        except ValueError:
+                            raise Exception("Invalid product ID found in cart.")
+
+                        
+                        product = Product.objects.get(id=product_id_int) 
+                        
+                        quantity = item_data['quantity']
+                        item_total = product.price * quantity
+                        subtotal += item_total
+                        
+                        items_to_create.append(OrderItem(
+                           
+                            product=product,
+                            product_name=product.name, 
+                            price=product.price,
+                            quantity=quantity,
+                            total=item_total
+                        ))
+
+                   
+                    shipping_cost = Decimal('15.00') 
+                    order.subtotal = subtotal
+                    order.shipping = shipping_cost
+                    order.total = subtotal + shipping_cost
+                    
+                    order.save() #
+                    
+                    for item in items_to_create:
+                        item.order = order 
+                        
+                   
+                    OrderItem.objects.bulk_create(items_to_create)
+                    
+                    del request.session['cart']
+                    request.session.modified = True
+                    
+                    return redirect('order_success_page')
+
+            except Product.DoesNotExist:
+               
+                messages.error(request, "One product doesn't exist anymore. Please check your cart.")
+                return redirect('view_cart') 
             
-            shipping_cost = Decimal('15.00') 
-            order.subtotal = subtotal
-            order.shipping = shipping_cost
-            order.total = subtotal + shipping_cost
-            
-            
-            order.save()
-            
-            
-            for item in items_to_create:
-                item.order = order 
-            
-          
-            OrderItem.objects.bulk_create(items_to_create)
-            
-            # (7) GOLIM COȘUL
-            del request.session['cart']
-            request.session.modified = True
-            
-            return redirect('order_success_page')
+            except Exception as e:
+             
+                messages.error(request, f"Error: {type(e).__name__}. Order Canceled.")
+                return redirect('view_cart')
 
     else:
-  
+        # Când se face un request GET
         form = OrderCreateForm()
     
     context = {
         'form': form
     }
     return render(request, 'orders/checkout.html', context)
-
-
 
 @login_required
 def order_success(request):
